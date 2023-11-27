@@ -1,5 +1,75 @@
 <odoo>
   <data>
+    <record id="expense_view_form" model="ir.ui.view">
+        <field name="name">expense_view_form</field>
+        <field name="model">expense.intelbox</field>
+        <field name="arch" type="xml">
+            <form string="expense_form">
+                <header>
+                  <button name="expense_request" type="object" string="Request Expense" class="oe_highlight" states="draft"/>
+                  <button name="reset_draft" type="object" string="Reset to draft" class="oe_highlight" states="Requested"/>
+                  <button name="unit_expense_approve" type="object" string="Unit Approval" class="oe_highlight"  states="Requested"/>
+                  <button name="expense_fin_approve" type="object" string="Financial Approval" class="oe_highlight"  states="Unit Head Approve"/>
+                  <button name="expensefin_reject" type="object" string="Reject Request" class="oe_highlight"  states="Unit Head Approve"/>
+                  <button name="expense_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" />
+                    <button name="%(intelbox.disburse_expense_wizard)d" context="{'default_ref': subject, 'default_expense_id': active_id,}"
+                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve"/>
+
+                     <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
+              </header>
+                <sheet>
+                    <div class="oe_title">
+            <h1>
+                <field name="exp_no"/>
+            </h1>
+        </div>
+                    <group>
+                          <group>
+                            <field name="date"/>
+                            <field name="memo_to"/>
+                            <field name="copy_to" widget="many2many_tags"
+                            options="{'no_create_edit': True}"/>
+
+                          </group>
+                          <group>
+                            <field name="subject"/>
+                            <field name="request_from"/>
+
+
+                          </group>
+
+
+
+
+                    </group>
+                     <notebook>
+                  <page string="Expenses List">
+                      <field name="expenses" />
+
+
+
+                  </page>
+                     </notebook>
+                     <group>
+                 <field name="amount_total"/>
+             </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+      <record id="expense_view_tree" model="ir.ui.view">
+          <field name="name">expense_view_tree</field>
+          <field name="model">exprequest.expline</field>
+          <field name="arch" type="xml">
+              <tree string="expense list" editable="bottom">
+                  <field name="item_id"/>
+                  <field name="description"/>
+                  <field name="quantity"/>
+                  <field name="cost"/>
+                    <field name="price_subtotal"/>
+              </tree>
+          </field>
+      </record>
     <!-- explicit list view definition -->
 <!--
     <record model="ir.ui.view" id="intelbox.list">

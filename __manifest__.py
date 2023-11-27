@@ -20,13 +20,18 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base', 'mail', 'om_account_accountant', 'account'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
+        'wizard/disburse_wizard.xml',
+        'data/groups.xml',
+        'views/actions.xml',
         'views/views.xml',
         'views/templates.xml',
+        'data/automation.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [

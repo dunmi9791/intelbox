@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_intelbox_intelbox,intelbox.intelbox,model_intelbox_intelbox,base.group_user,1,1,1,1
+access_intelbox_requisition,intelbox.requisition,model_expense_intelbox,,1,1,1,1
+access_intelbox_requisition2,intelbox.requisition2,model_exprequest_expline,,1,1,1,1
+access_intelbox_requisition3,intelbox.requisition3,model_expense_item,,1,1,1,1
+access_intelbox_payment_wiz,intelbox.wizard,model_account_payment_wizard,,1,1,1,1

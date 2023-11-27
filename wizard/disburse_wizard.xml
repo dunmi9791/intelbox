@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+    <record id="view_account_payment_wizard_form" model="ir.ui.view">
+        <field name="name">account.payment.wizard.form</field>
+        <field name="model">account.payment.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="amount"/>
+                        <field name="payment_date"/>
+                        <field name="payment_type"/>
+                    </group>
+                    <group>
+                        <field name="bank"/>
+                        <field name="ref"/>
+                        <field name="expense_id" invisible="1"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Make Payment" type="object" name="create_payment" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+        <record id="disburse_expense_wizard" model="ir.actions.act_window">
+        <field name="name">Account Payment Wizard</field>
+        <field name="res_model">account.payment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_expense_id': active_id}</field>
+    </record>
+
+
+
+
+    </data>
+</odoo>
