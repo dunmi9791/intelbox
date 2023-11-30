@@ -16,16 +16,16 @@ class ExpenseRequest(models.Model):
     exp_no = fields.Char(string="Expense Number",
                          default=lambda self: _('New'),
                          requires=False, readonly=True, )
-    date = fields.Date(string="Date", required=True, )
+    date = fields.Date(string="Date", required=True, track_visibility='onchange',)
     memo_to = fields.Many2one(comodel_name="res.users", string="TO", required=True,
                               domain=lambda self: [( "groups_id", "=", self.env.ref( "intelbox.group_approverequest_group" ).id )])
     copy_to = fields.Many2many(comodel_name="res.users", string="CC")
-    subject = fields.Char(string="Subject", required=False,)
+    subject = fields.Char(string="Subject", required=False, track_visibility='onchange',)
     request_from = fields.Many2one(comodel_name="res.users", string="From", readonly=True, default=lambda self: self.env.user)
     expenses = fields.One2many(
         'exprequest.expline', 'exprequest_id', 'Expenses',
         copy=True, readonly=True, states={'draft': [('readonly', False)]}, )
-    amount_total = fields.Float('Total Requested/Approved', compute='_amount_total', store=True)
+    amount_total = fields.Float('Total Requested/Approved', compute='_amount_total', store=True, track_visibility='onchange',)
     state = fields.Selection(string="",
                              selection=[('draft', 'draft'), ('Requested', 'Requested'), ('Unit Head Approve', 'Unit Approval'),
                                         ('Fin Approve', 'Fin Approved'),
@@ -90,6 +90,23 @@ class ExpenseRequest(models.Model):
 
     def reset_draft(self):
         self.change_state('draft')
+
+    @api.model
+    def create(self, vals):
+        record = super(ExpenseRequest, self).create(vals)
+        record.add_user_as_follower()
+        return record
+
+    def write(self, vals):
+        result = super(ExpenseRequest, self).write(vals)
+        self.add_user_as_follower()
+        return result
+
+    def add_user_as_follower(self):
+        for record in self:
+            user = record.memo_to
+            if user:
+                record.message_subscribe(partner_ids=[user.id])
 
     @api.model_create_multi
     def create(self, vals_list):
