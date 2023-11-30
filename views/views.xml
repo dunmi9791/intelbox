@@ -8,12 +8,12 @@
                 <header>
                   <button name="expense_request" type="object" string="Request Expense" class="oe_highlight" states="draft"/>
                   <button name="reset_draft" type="object" string="Reset to draft" class="oe_highlight" states="Requested"/>
-                  <button name="unit_expense_approve" type="object" string="Unit Approval" class="oe_highlight"  states="Requested"/>
-                  <button name="expense_fin_approve" type="object" string="Financial Approval" class="oe_highlight"  states="Unit Head Approve"/>
-                  <button name="expensefin_reject" type="object" string="Reject Request" class="oe_highlight"  states="Unit Head Approve"/>
-                  <button name="expense_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" />
+                  <button name="unit_expense_approve" type="object" string="Unit Approval" class="oe_highlight"  states="Requested" groups="intelbox.group_approverequest_group"/>
+                  <button name="expense_fin_approve" type="object" string="Financial Approval" class="oe_highlight"  states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
+                  <button name="expensefin_reject" type="object" string="Reject Request" class="oe_highlight"  states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
+                  <button name="expense_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" groups="intelbox.group_approverequest_group"/>
                     <button name="%(intelbox.disburse_expense_wizard)d" context="{'default_ref': subject, 'default_expense_id': active_id,}"
-                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve"/>
+                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_finapproverequest_group"/>
 
                      <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
               </header>
@@ -54,6 +54,10 @@
                  <field name="amount_total"/>
              </group>
                 </sheet>
+                <div class="oe_chatter">
+              <field name="message_follower_ids" widget="mail_followers"/>
+              <field name="message_ids" widget="mail_thread"/>
+          </div>
             </form>
         </field>
     </record>
