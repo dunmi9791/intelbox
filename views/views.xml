@@ -13,7 +13,7 @@
                   <button name="expensefin_reject" type="object" string="Reject Request" class="oe_highlight"  states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
                   <button name="expense_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" groups="intelbox.group_approverequest_group"/>
                     <button name="%(intelbox.disburse_expense_wizard)d" context="{'default_ref': subject, 'default_expense_id': active_id,}"
-                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_finapproverequest_group"/>
+                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>
 
                      <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
               </header>
