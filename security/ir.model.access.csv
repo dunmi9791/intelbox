@@ -3,3 +3,4 @@ access_intelbox_requisition,intelbox.requisition,model_expense_intelbox,,1,1,1,1
 access_intelbox_requisition2,intelbox.requisition2,model_exprequest_expline,,1,1,1,1
 access_intelbox_requisition3,intelbox.requisition3,model_expense_item,,1,1,1,1
 access_intelbox_payment_wiz,intelbox.wizard,model_account_payment_wizard,,1,1,1,1
+access_intelbox_bill_wiz,intelbox.wizard2,model_create_vendor_bill_wizard,,1,1,1,1

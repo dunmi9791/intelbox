@@ -22,6 +22,7 @@ class AccountPaymentWizard(models.TransientModel):
                            help='Select the bank or cash journal for the payment.', required=True)
     expense_id = fields.Many2one(comodel_name="expense.intelbox", string="Expense Ref",
                                  default=lambda self: self._get_default_expense_intelbox())
+    related_bill = fields.Many2one('account.move', string='Related Bill', readonly=True, copy=False)
 
     def _get_default_expense_intelbox(self):
         return self.env.context.get('default_expense_id', False)
@@ -36,6 +37,7 @@ class AccountPaymentWizard(models.TransientModel):
             'payment_type': self.payment_type,
             'ref': self.ref,
             'journal_id': self.bank.id,
+            'invoice_vendor_bill_id': [(6, 0, self.related_bill.id)],
             # Add other necessary fields and values
         }
         payment = self.env['account.payment'].create(payment_vals)

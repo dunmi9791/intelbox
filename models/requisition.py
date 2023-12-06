@@ -3,6 +3,8 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
+from odoo.exceptions import ValidationError
+
 from datetime import date
 
 
@@ -35,15 +37,30 @@ class ExpenseRequest(models.Model):
 
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id)
-
-
-
-
+    related_bill = fields.Many2one('account.move', string='Related Bill', domain=[('journal_id', '=', 2 ), ('state', '=', 'posted')],
+                                   readonly=False, copy=False)
+    # invoice_count = fields.Integer(string='Invoice Count', compute='_compute_invoice_count')
 
     @api.depends('expenses.price_subtotal', )
     def _amount_total(self):
         for expenses in self:
             expenses.amount_total = sum(expense.price_subtotal for expense in expenses.expenses)
+
+    @api.depends('related_bill')
+    def _compute_invoice_count(self):
+        for record in self:
+            record.invoice_count = len(record.related_bill)
+
+    def action_view_invoices(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Bills',
+            'view_mode': 'tree,form',
+            'res_model': 'account.move',
+            'domain': [('related_bill.expense_id', '=', self.id)],
+            'context': {'create': False},
+        }
 
 
     def is_allowed_transition(self, old_state, new_state):
@@ -108,6 +125,24 @@ class ExpenseRequest(models.Model):
             if user:
                 record.message_subscribe(partner_ids=[user.id])
 
+    def action_register_payment(self):
+        ''' Open the account.payment.register wizard to pay the selected journal entries.
+        :return: An action opening the account.payment.register wizard.
+        '''
+        return {
+            'name': _('Register Payment'),
+            'res_model': 'account.payment.register',
+            'view_mode': 'form',
+            'context': {
+                'active_model': 'account.move',
+                'active_ids': self.related_bill.ids,
+                'expense_id': self.id,
+            },
+            'target': 'new',
+            'type': 'ir.actions.act_window',
+        }
+
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -115,7 +150,16 @@ class ExpenseRequest(models.Model):
                 vals['exp_no'] = self.env['ir.sequence'].next_by_code('increment_expense') or _('New')
         return super().create(vals_list)
 
+    # @api.model
+    # def create(self, vals):
+    #     if vals.get('state') == 'Fin Approve' and not vals.get('related_bill'):
+    #         raise ValidationError("The Related Bill is required in the Financial Approval  state.")
+    #     return super(ExpenseRequest, self).create(vals)
 
+    def write(self, vals):
+        if 'state' in vals and vals['state'] == 'Fin Approve' and not self.related_bill:
+            raise ValidationError("The Related Bill is required in the Financial Approval  state.")
+        return super(ExpenseRequest, self).write(vals)
 
 
 class ExpenserequestLine(models.Model):
@@ -150,3 +194,59 @@ class ExpenseItem(models.Model):
     _sql_constraints = [
         ('name_unique', 'unique(name)', 'Item already exist')
     ]
+
+
+# class AccountMove(models.Model):
+#     _inherit = 'account.move'
+#
+#     expense_id = fields.Many2one('expense.intelbox', string='Expense Request', readonly=True, copy=False)
+
+class AccountPaymentRegister(models.TransientModel):
+    _inherit = 'account.payment.register'
+    _description = 'Register Payment'
+
+    expense_id = fields.Many2one('expense.intelbox', string='Expense Request', readonly=True, copy=False)
+
+    def _create_payments(self):
+        self.ensure_one()
+        batches = self._get_batches()
+        first_batch_result = batches[0]
+        edit_mode = self.can_edit_wizard and (len(first_batch_result['lines']) == 1 or self.group_payment)
+        to_process = []
+
+        if edit_mode:
+            payment_vals = self._create_payment_vals_from_wizard(first_batch_result)
+            to_process.append({
+                'create_vals': payment_vals,
+                'to_reconcile': first_batch_result['lines'],
+                'batch': first_batch_result,
+            })
+        else:
+            # Don't group payments: Create one batch per move.
+            if not self.group_payment:
+                new_batches = []
+                for batch_result in batches:
+                    for line in batch_result['lines']:
+                        new_batches.append({
+                            **batch_result,
+                            'payment_values': {
+                                **batch_result['payment_values'],
+                                'payment_type': 'inbound' if line.balance > 0 else 'outbound'
+                            },
+                            'lines': line,
+                        })
+                batches = new_batches
+
+            for batch_result in batches:
+                to_process.append({
+                    'create_vals': self._create_payment_vals_from_batch(batch_result),
+                    'to_reconcile': batch_result['lines'],
+                    'batch': batch_result,
+                })
+
+        payments = self._init_payments(to_process, edit_mode=edit_mode)
+        self._post_payments(to_process, edit_mode=edit_mode)
+        self._reconcile_payments(to_process, edit_mode=edit_mode)
+        self.expense_id.expense_paid()
+        return payments
+

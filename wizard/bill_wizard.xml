@@ -1,0 +1,29 @@
+<odoo>
+    <record id="view_create_vendor_bill_wizard_form" model="ir.ui.view">
+        <field name="name">create.vendor.bill.wizard.form</field>
+        <field name="model">create.vendor.bill.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="journal_id"/>
+                    <field name="vendor_id"/>
+                    <field name="invoice_date"/>
+                    <field name="amount"/>
+                    <field name="description"/>
+                </group>
+                <footer>
+                    <button string="Create Bill" type="object" class="btn-primary" name="create_bill"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_vendor_bill_wizard" model="ir.actions.act_window">
+        <field name="name">Create Vendor Bill</field>
+        <field name="res_model">create.vendor.bill.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_create_vendor_bill_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

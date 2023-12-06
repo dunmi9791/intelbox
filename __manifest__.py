@@ -26,6 +26,7 @@
     'data': [
         'security/ir.model.access.csv',
         'wizard/disburse_wizard.xml',
+        'wizard/bill_wizard.xml',
         'data/groups.xml',
         'views/actions.xml',
         'views/views.xml',

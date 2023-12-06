@@ -12,12 +12,19 @@
                   <button name="expense_fin_approve" type="object" string="Financial Approval" class="oe_highlight"  states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
                   <button name="expensefin_reject" type="object" string="Reject Request" class="oe_highlight"  states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
                   <button name="expense_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" groups="intelbox.group_approverequest_group"/>
-                    <button name="%(intelbox.disburse_expense_wizard)d" context="{'default_ref': subject, 'default_expense_id': active_id,}"
-                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>
+                    <button name="action_register_payment" context="{'default_expense_id': active_id, }" type="object" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>
+<!--                    <button name="%(intelbox.disburse_expense_wizard)d" context="{'default_ref': subject, 'default_expense_id': active_id, 'default_related_bill': related_bill,}"-->
+<!--                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
+<!--                    <button name="%(intelbox.action_create_vendor_bill_wizard)d" context="{'default_expense_id': active_id,}"-->
+<!--                            type="action" string="Create Bill" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
+
 
                      <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
               </header>
                 <sheet>
+<!--                    <button class="oe_stat_button" type="object" name="action_view_invoices" icon="fa-pencil-square-o">-->
+<!--                    <field string="Bill" name="invoice_count" widget="statinfo"/>-->
+<!--                </button>-->
                     <div class="oe_title">
             <h1>
                 <field name="exp_no"/>
@@ -34,6 +41,7 @@
                           <group>
                             <field name="subject"/>
                             <field name="request_from"/>
+                              <field name="related_bill" attrs="{'required': [('state', '=', 'Fin Approve')]}"/>
 
 
                           </group>
@@ -61,7 +69,7 @@
             </form>
         </field>
     </record>
-      <record id="expense_view_tree" model="ir.ui.view">
+      <record id="expense_list_view_tree" model="ir.ui.view">
           <field name="name">expense_view_tree</field>
           <field name="model">exprequest.expline</field>
           <field name="arch" type="xml">
@@ -71,6 +79,19 @@
                   <field name="quantity"/>
                   <field name="cost"/>
                     <field name="price_subtotal"/>
+              </tree>
+          </field>
+      </record>
+      <record id="expense_view_tree" model="ir.ui.view">
+          <field name="name">expense_view_tree</field>
+          <field name="model">expense.intelbox</field>
+          <field name="arch" type="xml">
+              <tree string="expenses">
+                  <field name="exp_no"/>
+                  <field name="date"/>
+                  <field name="subject"/>
+                  <field name="amount_total"/>
+                  <field name="state"/>
               </tree>
           </field>
       </record>
