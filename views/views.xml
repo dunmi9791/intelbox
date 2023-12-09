@@ -87,9 +87,9 @@
           <field name="model">expense.intelbox</field>
           <field name="arch" type="xml">
               <tree string="expenses">
+                  <field name="subject"/>
                   <field name="exp_no"/>
                   <field name="date"/>
-                  <field name="subject"/>
                   <field name="amount_total"/>
                   <field name="state"/>
               </tree>
