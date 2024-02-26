@@ -78,7 +78,7 @@
             <field name="model">exprequest.expline</field>
             <field name="arch" type="xml">
                 <tree string="expense list" editable="bottom">
-                    <field name="item_id"/>
+                    <field name="item_id2"/>
                     <field name="description"/>
                     <field name="quantity"/>
                     <field name="cost"/>
