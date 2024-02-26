@@ -108,7 +108,7 @@ class ExpenseRequest(models.Model):
             'related_request': self.id,
             'invoice_line_ids': [
                 (0, 0, {
-                    'product_id': self.expenses.item_id.id,  # ID of the product
+                    'product_id': self.expenses.item_id2.id,  # ID of the product
                     'name': self.expenses.description,  # Name of the product
                     'quantity': self.expenses.quantity,  # Quantity of the product
                     'price_unit': self.expenses.cost,  # Unit price of the product
@@ -202,7 +202,8 @@ class ExpenserequestLine(models.Model):
 
     name = fields.Char()
     exprequest_id = fields.Many2one(comodel_name="expense.intelbox", index=True, ondelete="cascade")
-    item_id = fields.Many2one(comodel_name="product.product", string="Item", required=True, ondelete="restrict", index=True)
+    item_id = fields.Many2one(comodel_name="expense.item", string="Item", required=True, index=True)
+    item_id2 = fields.Many2one(comodel_name="product.product", string="Item", required=True, ondelete="restrict", index=True)
     description = fields.Char(string="Description")
     quantity = fields.Float(string="Quantity", required=False, default=1.0, )
     cost = fields.Float(string=" Unit Cost", required=False, )
