@@ -38,7 +38,8 @@ class ExpenseRequest(models.Model):
     company_id = fields.Many2one('res.company', string='Company', required=True, readonly=True,
                                  default=lambda self: self.env.user.company_id)
     related_bill = fields.Many2one('account.move', string='Related Bill', domain=[('journal_id', '=', 2 ), ('state', '=', 'posted')],
-                                   readonly=False, copy=False)
+                                   readonly=True, copy=False)
+    vendor = fields.Many2one(comodel_name='res.partner', string='Vendor', required=False)
     # invoice_count = fields.Integer(string='Invoice Count', compute='_compute_invoice_count')
 
     @api.depends('expenses.price_subtotal', )
@@ -92,6 +93,32 @@ class ExpenseRequest(models.Model):
         self.change_state('Unit Head Approve')
 
     def expense_fin_approve(self):
+        vendor_bill_data = {
+            'partner_id': self.vendor.id,  # ID of the vendor
+            'move_type': 'in_invoice',  # Specify invoice type as supplier invoice
+            'invoice_date': self.date,  # Date of the invoice
+            'invoice_date_due': self.date,  # Due date of the invoice
+            'ref': self.subject,
+            'related_request': self.id,
+            'invoice_line_ids': [
+                (0, 0, {
+                    'product_id': self.expenses.item_id.id,  # ID of the product
+                    'name': self.expenses.description,  # Name of the product
+                    'quantity': self.expenses.quantity,  # Quantity of the product
+                    'price_unit': self.expenses.cost,  # Unit price of the product
+                    'account_id': 1,  # ID of the expense account
+                })
+            ],
+            # You can add more fields here as needed
+        }
+
+        # Create the vendor bill
+        vendor_bill = self.env['account.move'].create(vendor_bill_data)
+        self.related_bill = vendor_bill.id
+
+        # Confirm the vendor bill
+        vendor_bill.action_post()
+
         self.change_state('Fin Approve')
 
     def expense_paid(self):
@@ -169,7 +196,7 @@ class ExpenserequestLine(models.Model):
 
     name = fields.Char()
     exprequest_id = fields.Many2one(comodel_name="expense.intelbox", index=True, ondelete="cascade")
-    item_id = fields.Many2one(comodel_name="expense.item", string="Item", required=True, ondelete="restrict", index=True)
+    item_id = fields.Many2one(comodel_name="product.product", string="Item", required=True, ondelete="restrict", index=True)
     description = fields.Char(string="Description")
     quantity = fields.Float(string="Quantity", required=False, default=1.0, )
     cost = fields.Float(string=" Unit Cost", required=False, )
@@ -250,3 +277,20 @@ class AccountPaymentRegister(models.TransientModel):
         self.expense_id.expense_paid()
         return payments
 
+
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    related_request = fields.Many2one(
+       comodel_name='expense.intelbox',
+       string='Related request',
+       required=False, readonly=True)
+
+    def action_post(self):
+        res = super(AccountMove, self).action_post()
+        for invoice in self:
+            if invoice.state in ['paid', 'in_payment']:
+                related_record = invoice.related_request  # Assuming you have a related record field named related_record_id
+                if related_record:
+                    related_record.write({'state': 'disburse'})  # Updating the state of the related record
+        return res
