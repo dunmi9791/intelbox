@@ -1,169 +1,176 @@
 <odoo>
-  <data>
-    <record id="expense_view_form" model="ir.ui.view">
-        <field name="name">expense_view_form</field>
-        <field name="model">expense.intelbox</field>
-        <field name="arch" type="xml">
-            <form string="expense_form">
-                <header>
-                  <button name="expense_request" type="object" string="Request Expense" class="oe_highlight" states="draft"/>
-                  <button name="reset_draft" type="object" string="Reset to draft" class="oe_highlight" states="Requested"/>
-                  <button name="unit_expense_approve" type="object" string="Unit Approval" class="oe_highlight"  states="Requested" groups="intelbox.group_approverequest_group"/>
-                  <button name="expense_fin_approve" type="object" string="Financial Approval" class="oe_highlight"  states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
-                  <button name="expensefin_reject" type="object" string="Reject Request" class="oe_highlight"  states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
-                  <button name="expense_reject" type="object" string="Reject Request" class="oe_highlight" states="Requested" groups="intelbox.group_approverequest_group"/>
-<!--                    <button name="action_register_payment" context="{'default_expense_id': active_id, }" type="object" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
-<!--                    <button name="%(intelbox.disburse_expense_wizard)d" context="{'default_ref': subject, 'default_expense_id': active_id, 'default_related_bill': related_bill,}"-->
-<!--                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
-<!--                    <button name="%(intelbox.action_create_vendor_bill_wizard)d" context="{'default_expense_id': active_id,}"-->
-<!--                            type="action" string="Create Bill" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
+    <data>
+        <record id="expense_view_form" model="ir.ui.view">
+            <field name="name">expense_view_form</field>
+            <field name="model">expense.intelbox</field>
+            <field name="arch" type="xml">
+                <form string="expense_form">
+                    <header>
+                        <button name="expense_request" type="object" string="Request Expense" class="oe_highlight"
+                                states="draft"/>
+                        <button name="reset_draft" type="object" string="Reset to draft" class="oe_highlight"
+                                states="Requested"/>
+                        <button name="unit_expense_approve" type="object" string="Unit Approval" class="oe_highlight"
+                                states="Requested" groups="intelbox.group_approverequest_group"/>
+                        <button name="expense_fin_approve" type="object" string="Financial Approval"
+                                class="oe_highlight" states="Unit Head Approve"
+                                groups="intelbox.group_finapproverequest_group"/>
+                        <button name="expensefin_reject" type="object" string="Reject Request" class="oe_highlight"
+                                states="Unit Head Approve" groups="intelbox.group_finapproverequest_group"/>
+                        <button name="expense_reject" type="object" string="Reject Request" class="oe_highlight"
+                                states="Requested" groups="intelbox.group_approverequest_group"/>
+                        <!--                    <button name="action_register_payment" context="{'default_expense_id': active_id, }" type="object" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
+                        <!--                    <button name="%(intelbox.disburse_expense_wizard)d" context="{'default_ref': subject, 'default_expense_id': active_id, 'default_related_bill': related_bill,}"-->
+                        <!--                            type="action" string="Disburse Cash" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
+                        <!--                    <button name="%(intelbox.action_create_vendor_bill_wizard)d" context="{'default_expense_id': active_id,}"-->
+                        <!--                            type="action" string="Create Bill" class="oe_highlight" states="Fin Approve" groups="intelbox.group_disburse_group"/>-->
 
 
-                     <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
-              </header>
-                <sheet>
-<!--                    <button class="oe_stat_button" type="object" name="action_view_invoices" icon="fa-pencil-square-o">-->
-<!--                    <field string="Bill" name="invoice_count" widget="statinfo"/>-->
-<!--                </button>-->
-                    <div class="oe_title">
-            <h1>
-                <field name="exp_no"/>
-            </h1>
-        </div>
-                    <group>
-                          <group>
-                            <field name="date"/>
-                            <field name="memo_to"/>
-                            <field name="copy_to" widget="many2many_tags"
-                            options="{'no_create_edit': True}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,Requested,Approved,Rejected"/>
+                    </header>
+                    <sheet>
+                        <!--                    <button class="oe_stat_button" type="object" name="action_view_invoices" icon="fa-pencil-square-o">-->
+                        <!--                    <field string="Bill" name="invoice_count" widget="statinfo"/>-->
+                        <!--                </button>-->
+                        <div class="oe_title">
+                            <h1>
+                                <field name="exp_no"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="memo_to"/>
+                                <field name="copy_to" widget="many2many_tags"
+                                       options="{'no_create_edit': True}"/>
 
-                          </group>
-                          <group>
-                            <field name="subject"/>
-                            <field name="request_from"/>
-                              <field name="related_bill" />
-                              <field name="vendor"/>
+                            </group>
+                            <group>
+                                <field name="subject"/>
+                                <field name="request_from"/>
+                                <field name="related_bill"/>
+                                <field name="vendor"/>
 
-                          </group>
-
-
+                            </group>
 
 
-                    </group>
-                     <notebook>
-                  <page string="Expenses List">
-                      <field name="expenses" />
+                        </group>
+                        <notebook>
+                            <page string="Expenses List">
+                                <field name="expenses"/>
 
 
-
-                  </page>
-                     </notebook>
-                     <group>
-                 <field name="amount_total"/>
-             </group>
-                </sheet>
-                <div class="oe_chatter">
-              <field name="message_follower_ids" widget="mail_followers"/>
-              <field name="message_ids" widget="mail_thread"/>
-          </div>
-            </form>
-        </field>
-    </record>
-      <record id="expense_list_view_tree" model="ir.ui.view">
-          <field name="name">expense_view_tree</field>
-          <field name="model">exprequest.expline</field>
-          <field name="arch" type="xml">
-              <tree string="expense list" editable="bottom">
-                  <field name="item_id"/>
-                  <field name="description"/>
-                  <field name="quantity"/>
-                  <field name="cost"/>
+                            </page>
+                        </notebook>
+                        <group>
+                            <field name="amount_total"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        <record id="expense_list_view_tree" model="ir.ui.view">
+            <field name="name">expense_view_tree</field>
+            <field name="model">exprequest.expline</field>
+            <field name="arch" type="xml">
+                <tree string="expense list" editable="bottom">
+                    <field name="item_id"/>
+                    <field name="description"/>
+                    <field name="quantity"/>
+                    <field name="cost"/>
                     <field name="price_subtotal"/>
-              </tree>
-          </field>
-      </record>
-      <record id="expense_view_tree" model="ir.ui.view">
-          <field name="name">expense_view_tree</field>
-          <field name="model">expense.intelbox</field>
-          <field name="arch" type="xml">
-              <tree string="expenses">
-                  <field name="subject"/>
-                  <field name="exp_no"/>
-                  <field name="date"/>
-                  <field name="amount_total"/>
-                  <field name="state"/>
-              </tree>
-          </field>
-      </record>
-      <!-- Inherit Form View to Modify it -->
-      <record id="account_move_inherit_view" model="ir.ui.view">
-          <field name="name">account.move.inherit.view</field>
-          <field name="model">account.move</field>
-          <field name="inherit_id" ref="account.view_move_form"/>
-          <field name="arch" type="xml">
+                </tree>
+            </field>
+        </record>
+        <record id="expense_view_tree" model="ir.ui.view">
+            <field name="name">expense_view_tree</field>
+            <field name="model">expense.intelbox</field>
+            <field name="arch" type="xml">
+                <tree string="expenses">
+                    <field name="subject"/>
+                    <field name="exp_no"/>
+                    <field name="date"/>
+                    <field name="amount_total"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        <!-- Inherit Form View to Modify it -->
+        <record id="account_move_inherit_view" model="ir.ui.view">
+            <field name="name">account.move.inherit.view</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
 
-              <xpath expr="//field[@name='ref']" position="after">
-                  <!-- Add your fields or attributes here -->
-                  <field name="related_request"/>
-              </xpath>
+                <xpath expr="//field[@name='ref']" position="after">
+                    <!-- Add your fields or attributes here -->
+                    <field name="related_request"/>
+                </xpath>
+<!--                <xpath expr="//button[@id='account_invoice_payment_btn']" position="attributes">-->
+<!--                    <attribute name="context" value="{'default_expense_id': related_request}"/>-->
+<!--                </xpath>-->
 
-          </field>
-      </record>
-    <!-- explicit list view definition -->
-<!--
-    <record model="ir.ui.view" id="intelbox.list">
-      <field name="name">intelbox list</field>
-      <field name="model">intelbox.intelbox</field>
-      <field name="arch" type="xml">
-        <tree>
-          <field name="name"/>
-          <field name="value"/>
-          <field name="value2"/>
-        </tree>
-      </field>
-    </record>
--->
+            </field>
+        </record>
+        <!-- explicit list view definition -->
+        <!--
+            <record model="ir.ui.view" id="intelbox.list">
+              <field name="name">intelbox list</field>
+              <field name="model">intelbox.intelbox</field>
+              <field name="arch" type="xml">
+                <tree>
+                  <field name="name"/>
+                  <field name="value"/>
+                  <field name="value2"/>
+                </tree>
+              </field>
+            </record>
+        -->
 
-    <!-- actions opening views on models -->
-<!--
-    <record model="ir.actions.act_window" id="intelbox.action_window">
-      <field name="name">intelbox window</field>
-      <field name="res_model">intelbox.intelbox</field>
-      <field name="view_mode">tree,form</field>
-    </record>
--->
+        <!-- actions opening views on models -->
+        <!--
+            <record model="ir.actions.act_window" id="intelbox.action_window">
+              <field name="name">intelbox window</field>
+              <field name="res_model">intelbox.intelbox</field>
+              <field name="view_mode">tree,form</field>
+            </record>
+        -->
 
-    <!-- server action to the one above -->
-<!--
-    <record model="ir.actions.server" id="intelbox.action_server">
-      <field name="name">intelbox server</field>
-      <field name="model_id" ref="model_intelbox_intelbox"/>
-      <field name="state">code</field>
-      <field name="code">
-        action = {
-          "type": "ir.actions.act_window",
-          "view_mode": "tree,form",
-          "res_model": model._name,
-        }
-      </field>
-    </record>
--->
+        <!-- server action to the one above -->
+        <!--
+            <record model="ir.actions.server" id="intelbox.action_server">
+              <field name="name">intelbox server</field>
+              <field name="model_id" ref="model_intelbox_intelbox"/>
+              <field name="state">code</field>
+              <field name="code">
+                action = {
+                  "type": "ir.actions.act_window",
+                  "view_mode": "tree,form",
+                  "res_model": model._name,
+                }
+              </field>
+            </record>
+        -->
 
-    <!-- Top menu item -->
-<!--
-    <menuitem name="intelbox" id="intelbox.menu_root"/>
--->
-    <!-- menu categories -->
-<!--
-    <menuitem name="Menu 1" id="intelbox.menu_1" parent="intelbox.menu_root"/>
-    <menuitem name="Menu 2" id="intelbox.menu_2" parent="intelbox.menu_root"/>
--->
-    <!-- actions -->
-<!--
-    <menuitem name="List" id="intelbox.menu_1_list" parent="intelbox.menu_1"
-              action="intelbox.action_window"/>
-    <menuitem name="Server to list" id="intelbox" parent="intelbox.menu_2"
-              action="intelbox.action_server"/>
--->
-  </data>
+        <!-- Top menu item -->
+        <!--
+            <menuitem name="intelbox" id="intelbox.menu_root"/>
+        -->
+        <!-- menu categories -->
+        <!--
+            <menuitem name="Menu 1" id="intelbox.menu_1" parent="intelbox.menu_root"/>
+            <menuitem name="Menu 2" id="intelbox.menu_2" parent="intelbox.menu_root"/>
+        -->
+        <!-- actions -->
+        <!--
+            <menuitem name="List" id="intelbox.menu_1_list" parent="intelbox.menu_1"
+                      action="intelbox.action_window"/>
+            <menuitem name="Server to list" id="intelbox" parent="intelbox.menu_2"
+                      action="intelbox.action_server"/>
+        -->
+    </data>
 </odoo>

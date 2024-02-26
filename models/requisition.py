@@ -11,7 +11,7 @@ from datetime import date
 
 class ExpenseRequest(models.Model):
     _name = 'expense.intelbox'
-    _rec_name = 'exp_no'
+    _rec_name = 'combined_field'
     _description = 'staff expense request and reconciliation'
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
@@ -41,11 +41,17 @@ class ExpenseRequest(models.Model):
                                    readonly=True, copy=False)
     vendor = fields.Many2one(comodel_name='res.partner', string='Vendor', required=False)
     # invoice_count = fields.Integer(string='Invoice Count', compute='_compute_invoice_count')
+    combined_field = fields.Char(string='Expense', compute='_compute_combined_field')
 
     @api.depends('expenses.price_subtotal', )
     def _amount_total(self):
         for expenses in self:
             expenses.amount_total = sum(expense.price_subtotal for expense in expenses.expenses)
+
+    @api.depends('exp_no', 'subject')
+    def _compute_combined_field(self):
+        for record in self:
+            record.combined_field = "%s - %s" % (record.exp_no or '', record.subject or '')
 
     @api.depends('related_bill')
     def _compute_invoice_count(self):
@@ -152,23 +158,23 @@ class ExpenseRequest(models.Model):
             if user:
                 record.message_subscribe(partner_ids=[user.id])
 
-    def action_register_payment(self):
-        ''' Open the account.payment.register wizard to pay the selected journal entries.
-        :return: An action opening the account.payment.register wizard.
-        '''
-        return {
-            'name': _('Register Payment'),
-            'res_model': 'account.payment.register',
-            'view_mode': 'form',
-            'context': {
-                'active_model': 'account.move',
-                'active_ids': self.related_bill.ids,
-                'expense_id': self.id,
-            },
-            'target': 'new',
-            'type': 'ir.actions.act_window',
-        }
-
+    # def action_register_payment(self):
+    #     ''' Open the account.payment.register wizard to pay the selected journal entries.
+    #     :return: An action opening the account.payment.register wizard.
+    #     '''
+    #     return {
+    #         'name': _('Register Payment'),
+    #         'res_model': 'account.payment.register',
+    #         'view_mode': 'form',
+    #         'context': {
+    #             'active_model': 'account.move',
+    #             'active_ids': self.related_bill.ids,
+    #             'expense_id': self.id,
+    #         },
+    #         'target': 'new',
+    #         'type': 'ir.actions.act_window',
+    #     }
+    #
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -232,7 +238,7 @@ class AccountPaymentRegister(models.TransientModel):
     _inherit = 'account.payment.register'
     _description = 'Register Payment'
 
-    expense_id = fields.Many2one('expense.intelbox', string='Expense Request', readonly=True, copy=False)
+    expense_id = fields.Many2one('expense.intelbox', string='Expense Request', readonly=False, copy=False)
 
     def _create_payments(self):
         self.ensure_one()
@@ -277,6 +283,26 @@ class AccountPaymentRegister(models.TransientModel):
         self.expense_id.expense_paid()
         return payments
 
+    @api.model
+    def _get_batch_expense(self, batch_result):
+        ''' Helper to compute the communication based on the batch.
+        :param batch_result:    A batch returned by '_get_batches'.
+        :return:                A string representing a communication to be set on payment.
+        '''
+        labels = set(line.related_request.id or line.move_id.related_request.id for line in batch_result['lines'])
+        return ' '.join(sorted(labels))
+
+    @api.depends('can_edit_wizard')
+    def _compute_expense(self):
+        # The communication can't be computed in '_compute_from_lines' because
+        # it's a compute editable field and then, should be computed in a separated method.
+        for wizard in self:
+            if wizard.can_edit_wizard:
+                batches = wizard._get_batches()
+                wizard.expense_id = wizard._get_batch_expense(batches[0])
+            else:
+                wizard.communication = False
+
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -294,3 +320,25 @@ class AccountMove(models.Model):
                 if related_record:
                     related_record.write({'state': 'disburse'})  # Updating the state of the related record
         return res
+
+    def action_register_payment(self,  **kwargs):
+        print("why e dey try me.....again........")
+        ''' Open the account.payment.register wizard to pay the selected journal entries.
+        There can be more than one bank_account_id in the expense sheet when registering payment for multiple expenses.
+        The default_partner_bank_id is set only if there is one available, if more than one the field is left empty.
+        :return: An action opening the account.payment.register wizard.
+        '''
+
+        result = super(AccountMove, self).action_register_payment()
+
+        # Add expense_id to the context
+        result['context'].update(
+            {'expense_id': self.related_request.id})  # Assuming you have a related request field named related_request
+
+        return result
+
+
+
+
+
+
