@@ -202,7 +202,7 @@ class ExpenserequestLine(models.Model):
 
     name = fields.Char()
     exprequest_id = fields.Many2one(comodel_name="expense.intelbox", index=True, ondelete="cascade")
-    item_id = fields.Many2one(comodel_name="expense.item", string="Item", required=True, index=True)
+    item_id = fields.Many2one(comodel_name="expense.item", string="Item", required=False, index=True)
     item_id2 = fields.Many2one(comodel_name="product.product", string="Item", required=True, ondelete="restrict", index=True)
     description = fields.Char(string="Description")
     quantity = fields.Float(string="Quantity", required=False, default=1.0, )
