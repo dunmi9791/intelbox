@@ -99,6 +99,17 @@ class ExpenseRequest(models.Model):
         self.change_state('Unit Head Approve')
 
     def expense_fin_approve(self):
+        invoice_line_ids = []
+        for expense in self.expenses:
+            invoice_line = (0, 0, {
+                'product_id': expense.item_id2.id,  # ID of the product
+                'name': expense.description,  # Name of the product
+                'quantity': expense.quantity,  # Quantity of the product
+                'price_unit': expense.cost,  # Unit price of the product
+                'account_id': 1,  # ID of the expense account
+            })
+            invoice_line_ids.append(invoice_line)
+
         vendor_bill_data = {
             'partner_id': self.vendor.id,  # ID of the vendor
             'move_type': 'in_invoice',  # Specify invoice type as supplier invoice
@@ -106,15 +117,7 @@ class ExpenseRequest(models.Model):
             'invoice_date_due': self.date,  # Due date of the invoice
             'ref': self.subject,
             'related_request': self.id,
-            'invoice_line_ids': [
-                (0, 0, {
-                    'product_id': self.expenses.item_id2.id,  # ID of the product
-                    'name': self.expenses.description,  # Name of the product
-                    'quantity': self.expenses.quantity,  # Quantity of the product
-                    'price_unit': self.expenses.cost,  # Unit price of the product
-                    'account_id': 1,  # ID of the expense account
-                })
-            ],
+            'invoice_line_ids': invoice_line_ids,
             # You can add more fields here as needed
         }
 
