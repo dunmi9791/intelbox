@@ -376,10 +376,7 @@ class ResConfigSettings(models.TransientModel):
         string="Auto Done Setting",
         default=False,
     )
-    group_auto_done_setting = fields.Boolean(
-        string="Auto Done Setting",
-        default=False,
-    )
+
 
 
 
