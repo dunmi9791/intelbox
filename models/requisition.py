@@ -388,6 +388,18 @@ class ResConfigSettings(models.TransientModel):
         string="Delivery UPS",
         default=False,
     )
+    module_delivery_fedex = fields.Boolean(
+        string="Delivery FedEx",
+        default=False,
+    )
+    module_delivery_usps = fields.Boolean(
+        string="Delivery USPS",
+        default=False,
+    )
+    module_delivery_dhl = fields.Boolean(
+        string="Delivery DHL",
+        default=False,
+    )
 
 
 
