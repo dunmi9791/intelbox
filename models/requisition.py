@@ -408,6 +408,11 @@ class ResConfigSettings(models.TransientModel):
         string="Delivery EasyPost",
         default=False,
     )
+    module_delivery_sendcloud = fields.Boolean(
+        string="Delivery SendCloud",
+        default=False,
+    )
+
 
 
 
