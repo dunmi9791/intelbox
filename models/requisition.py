@@ -384,6 +384,10 @@ class ResConfigSettings(models.TransientModel):
         string="Delivery Module",
         default=False,
     )
+    module_delivery_ups = fields.Boolean(
+        string="Delivery UPS",
+        default=False,
+    )
 
 
 
