@@ -368,6 +368,10 @@ class ResConfigSettings(models.TransientModel):
         string="Use Quotation Validity Days",
         default=False,
     )
+    group_warning_sale = fields.Boolean(
+        string="Warning Sale",
+        default=False,
+    )
 
 
 
