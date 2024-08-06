@@ -380,6 +380,10 @@ class ResConfigSettings(models.TransientModel):
         string="Proforma Sales",
         default=False,
     )
+    module_delivery = fields.Boolean(
+        string="Delivery Module",
+        default=False,
+    )
 
 
 
