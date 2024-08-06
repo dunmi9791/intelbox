@@ -342,6 +342,15 @@ class AccountMove(models.Model):
         return result
 
 
+class ResConfigSettings(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    module_product_email_template = fields.Boolean(
+        string="Enable Product Email Template"
+    )
+
+
+
 
 
 
