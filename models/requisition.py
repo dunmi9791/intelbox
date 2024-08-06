@@ -364,6 +364,10 @@ class ResConfigSettings(models.TransientModel):
         string="Use Quotation Validity Days",
         default=False,
     )
+    quotation_validity_days = fields.Boolean(
+        string="Use Quotation Validity Days",
+        default=False,
+    )
 
 
 
