@@ -352,6 +352,10 @@ class ResConfigSettings(models.TransientModel):
         string="Sale Margin Module",
         default=False,
     )
+    portal_confirmation_sign = fields.Boolean(
+        string="Portal Confirmation Signature",
+        default=False,
+    )
 
 
 
