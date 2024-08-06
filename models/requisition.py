@@ -400,6 +400,15 @@ class ResConfigSettings(models.TransientModel):
         string="Delivery DHL",
         default=False,
     )
+    module_delivery_bpost = fields.Boolean(
+        string="Delivery BPost",
+        default=False,
+    )
+    module_delivery_easypost = fields.Boolean(
+        string="Delivery EasyPost",
+        default=False,
+    )
+
 
 
 
