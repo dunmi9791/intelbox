@@ -360,6 +360,10 @@ class ResConfigSettings(models.TransientModel):
         string="Portal Confirmation Payment",
         default=False,
     )
+    use_quotation_validity_days = fields.Boolean(
+        string="Use Quotation Validity Days",
+        default=False,
+    )
 
 
 
