@@ -348,6 +348,10 @@ class ResConfigSettings(models.TransientModel):
     module_product_email_template = fields.Boolean(
         string="Enable Product Email Template"
     )
+    module_sale_margin = fields.Boolean(
+        string="Sale Margin Module",
+        default=False,
+    )
 
 
 
