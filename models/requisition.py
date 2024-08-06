@@ -376,6 +376,11 @@ class ResConfigSettings(models.TransientModel):
         string="Auto Done Setting",
         default=False,
     )
+    group_proforma_sales = fields.Boolean(
+        string="Proforma Sales",
+        default=False,
+    )
+
 
 
 
