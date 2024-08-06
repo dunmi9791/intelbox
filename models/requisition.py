@@ -356,6 +356,10 @@ class ResConfigSettings(models.TransientModel):
         string="Portal Confirmation Signature",
         default=False,
     )
+    portal_confirmation_pay = fields.Boolean(
+        string="Portal Confirmation Payment",
+        default=False,
+    )
 
 
 
