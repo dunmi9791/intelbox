@@ -412,11 +412,26 @@ class ResConfigSettings(models.TransientModel):
         string="Delivery SendCloud",
         default=False,
     )
+    default_invoice_policy = fields.Selection(
+        string="Default Invoice Policy",
+        selection=[('order', 'Ordered quantities'), ('delivery', 'Delivered quantities')],
+        default='order',
+        required=True,
+    )
 
 
+class ResPartner(models.Model):
+    _inherit = 'res.partner'
 
+    sale_order_count = fields.Integer(
+        string="Sale Order Count",
+        compute='_compute_sale_order_count',
+        store=True,
+    )
 
-
+    def _compute_sale_order_count(self):
+        for partner in self:
+            partner.sale_order_count = self.env['sale.order'].search_count([('partner_id', '=', partner.id)])
 
 
 
